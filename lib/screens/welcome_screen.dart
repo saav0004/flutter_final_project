@@ -1,21 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:device_info_plus/device_info_plus.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
 
-  getDeviceId() async {
-    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
-    IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-    print('Running on ${iosInfo.identifierForVendor}');
-  }
-
   @override
   Widget build(BuildContext context) {
-    getDeviceId();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('First Route'),
+        title: const Text('Home Screen'),
       ),
       body: Center(
         child: Column(
