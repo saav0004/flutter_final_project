@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
 
 // screens
 import 'package:final_project/screens/enter_code_screen.dart';
@@ -8,7 +7,10 @@ import 'package:final_project/screens/share_code_screen.dart';
 import 'package:final_project/screens/welcome_screen.dart';
 
 // packages
+import 'dart:async';
 import 'package:provider/provider.dart';
+
+// provider
 import 'package:final_project/provider/my_data_model.dart';
 
 // id package
@@ -33,8 +35,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String? _deviceId;
-
   @override
   void initState() {
     super.initState();
@@ -54,8 +54,9 @@ class _MyAppState extends State<MyApp> {
     if (!mounted) return;
 
     setState(() {
-      _deviceId = deviceId;
-      print("deviceId->$_deviceId");
+      Provider.of<MyDataModel>(context, listen: false).setDeviceId = deviceId!;
+      print(
+          'Device ID: ${Provider.of<MyDataModel>(context, listen: false).deviceId}');
     });
   }
 
