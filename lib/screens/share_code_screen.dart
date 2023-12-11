@@ -39,7 +39,7 @@ class _ShareCodeScreenState extends State<ShareCodeScreen> {
     return Consumer<MyDataModel>(
       builder: (context, value, child) => Scaffold(
         appBar: AppBar(
-          title: const Text('Share code screen / Start session'),
+          title: const Text('Share code screen'),
         ),
         body: Center(
           child: Column(

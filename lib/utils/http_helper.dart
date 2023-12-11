@@ -4,11 +4,11 @@ import 'dart:async';
 
 // import provider
 import 'package:final_project/provider/my_data_model.dart';
+import 'package:provider/provider.dart';
 
 // URL
 //https://api.themoviedb.org/3/movie/popular?api_key=516113cfd57ae5d6cb785a6c5bb76fc0
 
-// code from my last assignment
 class HttpHelper {
   static Future<List<Movie>> fetch(String url) async {
     Uri uri = Uri.parse(url);
@@ -23,17 +23,6 @@ class HttpHelper {
     }
   }
 
-  // 20231210142709
-// https://movie-night-api.onrender.com/start-session?device_id=1235123123
-
-// {
-//   "data": {
-//     "message": "new session created.",
-//     "code": "4674",
-//     "session_id": "a055f804-1e9a-4a6e-94ee-d2ef8f5ec60e"
-//   }
-// }
-
   static Future<Session> fetchSession(String url) async {
     Uri uri = Uri.parse(url);
     http.Response resp = await http.get(uri);
@@ -41,6 +30,25 @@ class HttpHelper {
       Map<String, dynamic> data = jsonDecode(resp.body);
       print(data);
       return Session.fromJson(data);
+    } else {
+      throw Exception('Did not get a valid response');
+    }
+  }
+
+  /*
+     "GET /vote-movie": [
+      "requires {String session_id, int movie_id, Boolean vote}",
+      "returns {data: {String message, int movie_id, Boolean match}}"
+    ]
+  */
+
+  static Future<JoinSession> joinSession(String url) async {
+    Uri uri = Uri.parse(url);
+    http.Response resp = await http.get(uri);
+    if (resp.statusCode == 200) {
+      Map<String, dynamic> data = jsonDecode(resp.body);
+      print(data);
+      return JoinSession.fromJson(data);
     } else {
       throw Exception('Did not get a valid response');
     }
@@ -98,4 +106,19 @@ class Session {
       sessionId: json['data']['session_id'],
     );
   }
+}
+
+class JoinSession {
+  String message;
+  String sessionId;
+
+// from json
+  factory JoinSession.fromJson(Map<String, dynamic> json) {
+    return JoinSession(
+      message: json['data']['message'],
+      sessionId: json['data']['session_id'],
+    );
+  }
+
+  JoinSession({required this.message, required this.sessionId});
 }

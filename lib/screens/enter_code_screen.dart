@@ -1,5 +1,12 @@
 import 'package:flutter/material.dart';
 
+// http helper
+import 'package:final_project/utils/http_helper.dart';
+
+// provider
+import 'package:provider/provider.dart';
+import 'package:final_project/provider/my_data_model.dart';
+
 class EnterCodeScreen extends StatefulWidget {
   const EnterCodeScreen({super.key});
 
@@ -9,8 +16,36 @@ class EnterCodeScreen extends StatefulWidget {
 
 class _EnterCodeScreenState extends State<EnterCodeScreen> {
   final GlobalKey<FormState> _formStateKey = GlobalKey<FormState>();
+  final TextEditingController codeController = TextEditingController();
 
   MyData _data = MyData();
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is removed from the widget tree.
+    codeController.dispose();
+    super.dispose();
+  }
+
+  // Create a separate method to fetch sessionx
+  void _fetchJoinSession(String code) async {
+    String deviceId = Provider.of<MyDataModel>(context, listen: false).deviceId;
+    print("Device ID: $deviceId");
+
+    String url =
+        "https://movie-night-api.onrender.com/join-session?device_id=$deviceId&code=$code";
+
+    JoinSession joinSession = await HttpHelper.joinSession(url);
+
+    print(joinSession.message);
+
+    setState(() {
+      Provider.of<MyDataModel>(context, listen: false).setSessionId =
+          joinSession.sessionId;
+    });
+
+    Navigator.pushNamed(context, "/movie_selection_screen");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,11 +68,14 @@ class _EnterCodeScreenState extends State<EnterCodeScreen> {
                 child: Container(
                   margin: EdgeInsets.fromLTRB(40, 0, 40, 0),
                   child: TextFormField(
+                    controller: codeController,
                     keyboardType: TextInputType.number,
                     maxLength: 4,
                     decoration: const InputDecoration(
-                      labelText: 'Enter your code',
-                    ),
+                        helperText: "Enter the code",
+                        labelText: 'Code',
+                        border: OutlineInputBorder(),
+                        hintText: "1234"),
                     validator: (value) {
                       if (value!.isEmpty ||
                           value.length != 4 ||
@@ -55,14 +93,13 @@ class _EnterCodeScreenState extends State<EnterCodeScreen> {
             ),
             TextButton(
               onPressed: () {
-                if (_formStateKey.currentState?.validate() ?? false) {
-                  // validate returns true if form fields are good
-                  _formStateKey.currentState?.save();
-                  // triggers the onSave functions in the TextFormFields
+                if (_formStateKey.currentState!.validate()) {
+                  _formStateKey.currentState!.save();
+                  print("Code: ${_data.code}");
+                  _fetchJoinSession(_data.code);
                 } else {
-                  // form data not valid
+                  print("Form is invalid");
                 }
-                Navigator.pushNamed(context, "/movie_selection_screen");
               },
               child: const Text('Begin'),
             )
