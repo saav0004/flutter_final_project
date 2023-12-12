@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:final_project/utils/http_helper.dart';
-import 'package:flutter/services.dart';
-import 'dart:math' as math;
 
 // swipe card package
 import 'package:swiping_card_deck/swiping_card_deck.dart';
