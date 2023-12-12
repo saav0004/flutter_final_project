@@ -33,28 +33,34 @@ class _MovieSelectionScreenState extends State<MovieSelectionScreen> {
       builder: (BuildContext context, AsyncSnapshot<List<Movie>> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(
-            child: CircularProgressIndicator(),
+            child: Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
           );
         } else if (snapshot.hasError) {
           return Text("${snapshot.error}");
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return Text("No movies available");
+          return const Center(
+            child: Scaffold(
+              body: Center(
+                child: CircularProgressIndicator(),
+              ),
+            ),
+          );
         } else {
           movieList = snapshot.data!;
-
           SwipingCardDeck deck = SwipingCardDeck(
             cardDeck: getCardDeck(),
             onDeckEmpty: () async {
               setState(() {
                 currentPage++;
               });
-              print(currentPage);
-              Text("No more movies available");
-              print("object");
+              const Text("No more movies available");
 
               List<Movie> nextPageMovies = await fetchMovies(currentPage + 1);
               if (nextPageMovies.isNotEmpty) {
-                print("asdasdasda");
                 setState(
                   () {
                     movieList = nextPageMovies;
@@ -71,7 +77,6 @@ class _MovieSelectionScreenState extends State<MovieSelectionScreen> {
             swipeAnimationDuration: const Duration(milliseconds: 300),
             disableDragging: false,
           );
-
           return Scaffold(
             appBar: AppBar(
               title: const Text('Movie selection screen'),
@@ -117,8 +122,7 @@ class _MovieSelectionScreenState extends State<MovieSelectionScreen> {
   List<Card> getCardDeck() {
     return movieList.map((movie) {
       return Card(
-        color: Color((math.Random().nextDouble() * 0xFFFFFF).toInt())
-            .withOpacity(1.0),
+        color: Colors.white,
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(10),
@@ -131,12 +135,6 @@ class _MovieSelectionScreenState extends State<MovieSelectionScreen> {
               ),
             ],
           ),
-          //  child: Image.network(
-          //     'https://image.tmdb.org/t/p/original/${movie.posterPath}',
-          //     height: 550,
-          //     width: 350,
-          //     fit: BoxFit.cover,
-          //   ),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(10),
             child: Container(
@@ -151,7 +149,7 @@ class _MovieSelectionScreenState extends State<MovieSelectionScreen> {
               child: Align(
                 alignment: Alignment.bottomLeft,
                 child: Container(
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
                         Color.fromRGBO(4, 4, 4, 0),
@@ -177,7 +175,7 @@ class _MovieSelectionScreenState extends State<MovieSelectionScreen> {
                               child: Text(
                                 maxLines: 2,
                                 movie.title,
-                                style: TextStyle(
+                                style: const TextStyle(
                                   color: Colors.white,
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
@@ -186,17 +184,28 @@ class _MovieSelectionScreenState extends State<MovieSelectionScreen> {
                             ),
                             Text(
                               movie.releaseDate.toString(),
-                              style: TextStyle(
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 16,
                               ),
                             ),
-                            Text(
-                              movie.voteAverage.toString(),
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                              ),
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.star_rate,
+                                  color: Colors.yellow,
+                                ),
+                                const SizedBox(
+                                  width: 20,
+                                ),
+                                Text(
+                                  movie.voteAverage.toString(),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
