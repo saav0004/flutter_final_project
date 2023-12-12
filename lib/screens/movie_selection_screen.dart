@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:final_project/utils/http_helper.dart';
+import 'package:flutter/services.dart';
 import 'dart:math' as math;
 
-// swiper card
+// swipe card package
 import 'package:swiping_card_deck/swiping_card_deck.dart';
 
 class MovieSelectionScreen extends StatefulWidget {
@@ -17,25 +18,16 @@ class _MovieSelectionScreenState extends State<MovieSelectionScreen> {
   late List<Movie> movieList;
   int currentPage = 1;
 
-  @override
-  void initState() {
-    super.initState();
-    movies = fetchMovies(currentPage);
-  }
-
   Future<List<Movie>> fetchMovies(int page) async {
     String url =
         'https://api.themoviedb.org/3/movie/popular?api_key=516113cfd57ae5d6cb785a6c5bb76fc0&page=$page';
     List<Movie> result = await HttpHelper.fetch(url);
-
-    // Increment the currentPage after using it in the URL
-    currentPage++;
-
     return result;
   }
 
   @override
   Widget build(BuildContext context) {
+    movies = fetchMovies(currentPage);
     return FutureBuilder<List<Movie>>(
       future: movies,
       builder: (BuildContext context, AsyncSnapshot<List<Movie>> snapshot) {
@@ -49,18 +41,23 @@ class _MovieSelectionScreenState extends State<MovieSelectionScreen> {
           return Text("No movies available");
         } else {
           movieList = snapshot.data!;
-          final SwipingCardDeck deck = SwipingCardDeck(
+
+          SwipingCardDeck deck = SwipingCardDeck(
             cardDeck: getCardDeck(),
             onDeckEmpty: () async {
+              setState(() {
+                currentPage++;
+              });
+              print(currentPage);
               Text("No more movies available");
               print("object");
 
-              List<Movie> nextPageMovies = await fetchMovies(currentPage);
+              List<Movie> nextPageMovies = await fetchMovies(currentPage + 1);
               if (nextPageMovies.isNotEmpty) {
                 print("asdasdasda");
                 setState(
                   () {
-                    movieList.addAll(nextPageMovies);
+                    movieList = nextPageMovies;
                   },
                 );
               }
@@ -71,7 +68,7 @@ class _MovieSelectionScreenState extends State<MovieSelectionScreen> {
             swipeThreshold: MediaQuery.of(context).size.width / 3,
             minimumVelocity: 1000,
             rotationFactor: 0.8 / 3.14,
-            swipeAnimationDuration: const Duration(milliseconds: 100),
+            swipeAnimationDuration: const Duration(milliseconds: 300),
             disableDragging: false,
           );
 
@@ -134,29 +131,81 @@ class _MovieSelectionScreenState extends State<MovieSelectionScreen> {
               ),
             ],
           ),
-          child: Column(
-            children: [
-              // network image with rounded corners
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Image.network(
-                  'https://image.tmdb.org/t/p/original/${movie.posterPath}',
-                  height: 550,
-                  width: 350,
+          //  child: Image.network(
+          //     'https://image.tmdb.org/t/p/original/${movie.posterPath}',
+          //     height: 550,
+          //     width: 350,
+          //     fit: BoxFit.cover,
+          //   ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(10),
+            child: Container(
+              height: 550,
+              decoration: BoxDecoration(
+                image: DecorationImage(
+                  image: NetworkImage(
+                      'https://image.tmdb.org/t/p/original/${movie.posterPath}'),
                   fit: BoxFit.cover,
                 ),
               ),
-              SizedBox(height: 10),
-              Container(
-                height: 50,
-                width: 150,
-                child: Text(
-                  maxLines: 2,
-                  movie.title,
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              child: Align(
+                alignment: Alignment.bottomLeft,
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        Color.fromRGBO(4, 4, 4, 0),
+                        Color.fromRGBO(4, 4, 4, 0.8),
+                        Color.fromRGBO(4, 4, 4, 0.9),
+                        Color.fromRGBO(4, 4, 4, 1),
+                      ],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                    ),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            SizedBox(
+                              width: 200,
+                              child: Text(
+                                maxLines: 2,
+                                movie.title,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            Text(
+                              movie.releaseDate.toString(),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                            ),
+                            Text(
+                              movie.voteAverage.toString(),
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
-            ],
+            ),
           ),
         ),
       );

@@ -12,7 +12,7 @@ class HttpHelper {
     if (resp.statusCode == 200) {
       dynamic data = jsonDecode(resp.body);
       List<dynamic> results = data['results'];
-      print(results);
+
       return results.map((json) => Movie.fromJson(json)).toList();
     } else {
       throw Exception('Did not get a valid response');
