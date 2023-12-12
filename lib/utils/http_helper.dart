@@ -2,10 +2,6 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:async';
 
-// import provider
-import 'package:final_project/provider/my_data_model.dart';
-import 'package:provider/provider.dart';
-
 // URL
 //https://api.themoviedb.org/3/movie/popular?api_key=516113cfd57ae5d6cb785a6c5bb76fc0
 
@@ -16,7 +12,7 @@ class HttpHelper {
     if (resp.statusCode == 200) {
       dynamic data = jsonDecode(resp.body);
       List<dynamic> results = data['results'];
-      // print(results);
+      print(results);
       return results.map((json) => Movie.fromJson(json)).toList();
     } else {
       throw Exception('Did not get a valid response');
@@ -36,11 +32,11 @@ class HttpHelper {
   }
 
   /*
-     "GET /vote-movie": [
-      "requires {String session_id, int movie_id, Boolean vote}",
-      "returns {data: {String message, int movie_id, Boolean match}}"
-    ]
-  */
+      "GET /vote-movie": [
+        "requires {String session_id, int movie_id, Boolean vote}",
+        "returns {data: {String message, int movie_id, Boolean match}}"
+      ]
+    */
 
   static Future<JoinSession> joinSession(String url) async {
     Uri uri = Uri.parse(url);
@@ -72,11 +68,11 @@ class Movie {
   late double voteAverage;
   late int voteCount;
 
-// named constructor
+  // named constructor
   Movie.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     adult = json['adult'];
-    backdropPath = json['backdrop_path'];
+    backdropPath = json['backdrop_path'] ?? '';
     genreIds = json['genre_ids'].cast<int>();
     originalLanguage = json['original_language'];
     originalTitle = json['original_title'];
@@ -98,7 +94,7 @@ class Session {
 
   Session({required this.message, required this.code, required this.sessionId});
 
-// named constructor
+  // named constructor
   factory Session.fromJson(Map<String, dynamic> json) {
     return Session(
       message: json['data']['message'],
@@ -112,7 +108,7 @@ class JoinSession {
   String message;
   String sessionId;
 
-// from json
+  // from json
   factory JoinSession.fromJson(Map<String, dynamic> json) {
     return JoinSession(
       message: json['data']['message'],

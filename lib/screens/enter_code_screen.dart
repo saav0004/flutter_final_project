@@ -27,7 +27,7 @@ class _EnterCodeScreenState extends State<EnterCodeScreen> {
     super.dispose();
   }
 
-  // Create a separate method to fetch sessionx
+  // Join session function
   void _fetchJoinSession(String code) async {
     String deviceId = Provider.of<MyDataModel>(context, listen: false).deviceId;
     print("Device ID: $deviceId");

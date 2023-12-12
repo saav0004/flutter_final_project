@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 class MyDataModel extends ChangeNotifier {
   // default values
-  String _deviceId = '123456789';
-  String _sessionId = '123456789';
-  String _code = '123456789';
+  String _deviceId = '';
+  String _sessionId = '';
+  String _code = '';
 
   // getters
   String get deviceId => _deviceId;
