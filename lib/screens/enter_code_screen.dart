@@ -22,7 +22,6 @@ class _EnterCodeScreenState extends State<EnterCodeScreen> {
 
   @override
   void dispose() {
-    // Clean up the controller when the widget is removed from the widget tree.
     codeController.dispose();
     super.dispose();
   }
@@ -37,11 +36,6 @@ class _EnterCodeScreenState extends State<EnterCodeScreen> {
     JoinSession joinSession = await HttpHelper.joinSession(url);
 
     context.read<MyDataModel>().setSessionId(joinSession.sessionId);
-
-    // setState(() {
-    //   Provider.of<MyDataModel>(context, listen: false).setSessionId =
-    //       joinSession.sessionId;
-    // });
 
     Navigator.pushNamed(context, "/movie_selection_screen");
   }
@@ -65,7 +59,7 @@ class _EnterCodeScreenState extends State<EnterCodeScreen> {
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Container(
-                  margin: EdgeInsets.fromLTRB(40, 0, 40, 0),
+                  margin: const EdgeInsets.fromLTRB(40, 0, 40, 0),
                   child: TextFormField(
                     controller: codeController,
                     keyboardType: TextInputType.number,

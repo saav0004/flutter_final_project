@@ -54,12 +54,6 @@ class _MyAppState extends State<MyApp> {
     if (!mounted) return;
 
     context.read<MyDataModel>().setDeviceId(deviceId!);
-
-    // setState(() {
-    //   Provider.of<MyDataModel>(context, listen: false).setDeviceId = deviceId!;
-    //   print(
-    //       'Device ID: ${Provider.of<MyDataModel>(context, listen: false).deviceId}');
-    // });
   }
 
   @override

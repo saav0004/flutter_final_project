@@ -1,3 +1,4 @@
+import 'package:final_project/utils/http_helper.dart';
 import 'package:flutter/material.dart';
 
 class MyDataModel extends ChangeNotifier {
@@ -5,13 +6,11 @@ class MyDataModel extends ChangeNotifier {
   String _deviceId = '';
   String _sessionId = '';
   String _code = '';
-  bool _isMatch = false;
 
   // getters
   String get deviceId => _deviceId;
   String get sessionId => _sessionId;
   String get code => _code;
-  bool get isMatch => _isMatch;
 
   // setters
   void setDeviceId(String deviceId) {
@@ -26,11 +25,6 @@ class MyDataModel extends ChangeNotifier {
 
   void setCode(String code) {
     _code = code;
-    notifyListeners();
-  }
-
-  void setIsMatch(bool isMatch) {
-    _isMatch = isMatch;
     notifyListeners();
   }
 }
