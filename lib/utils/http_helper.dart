@@ -6,6 +6,7 @@ import 'dart:async';
 //https://api.themoviedb.org/3/movie/popular?api_key=516113cfd57ae5d6cb785a6c5bb76fc0
 
 class HttpHelper {
+  // fetch movie
   static Future<List<Movie>> fetch(String url) async {
     Uri uri = Uri.parse(url);
     http.Response resp = await http.get(uri);
@@ -31,13 +32,6 @@ class HttpHelper {
     }
   }
 
-  /*
-      "GET /vote-movie": [
-        "requires {String session_id, int movie_id, Boolean vote}",
-        "returns {data: {String message, int movie_id, Boolean match}}"
-      ]
-    */
-
   static Future<JoinSession> joinSession(String url) async {
     Uri uri = Uri.parse(url);
     http.Response resp = await http.get(uri);
@@ -45,6 +39,18 @@ class HttpHelper {
       Map<String, dynamic> data = jsonDecode(resp.body);
       print(data);
       return JoinSession.fromJson(data);
+    } else {
+      throw Exception('Did not get a valid response');
+    }
+  }
+
+  static Future<VoteSession> voteSession(String url) async {
+    Uri uri = Uri.parse(url);
+    http.Response resp = await http.get(uri);
+    if (resp.statusCode == 200) {
+      Map<String, dynamic> data = jsonDecode(resp.body);
+      print(data);
+      return VoteSession.fromJson(data);
     } else {
       throw Exception('Did not get a valid response');
     }
@@ -117,4 +123,22 @@ class JoinSession {
   }
 
   JoinSession({required this.message, required this.sessionId});
+}
+
+class VoteSession {
+  String message;
+  int movieId;
+  bool match;
+
+  // from json
+  factory VoteSession.fromJson(Map<String, dynamic> json) {
+    return VoteSession(
+      message: json['data']['message'],
+      movieId: json['data']['movie_id'],
+      match: json['data']['match'],
+    );
+  }
+
+  VoteSession(
+      {required this.message, required this.movieId, required this.match});
 }

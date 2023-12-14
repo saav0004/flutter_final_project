@@ -23,9 +23,19 @@ class _MovieSelectionScreenState extends State<MovieSelectionScreen> {
     return result;
   }
 
+  /*
+
+              // https://movie-night-api.onrender.com/vote-movie?session_id=$sessionID&movie_id=$movieID&vote=$vote
+  */
+
   @override
   Widget build(BuildContext context) {
     movies = fetchMovies(currentPage);
+
+    bool isMatch = false;
+
+    Movie? movieMatch;
+
     return FutureBuilder<List<Movie>>(
       future: movies,
       builder: (BuildContext context, AsyncSnapshot<List<Movie>> snapshot) {
@@ -66,8 +76,14 @@ class _MovieSelectionScreenState extends State<MovieSelectionScreen> {
                 );
               }
             },
-            onLeftSwipe: (Card card) => debugPrint("Swiped left!"),
-            onRightSwipe: (Card card) => debugPrint("Swiped right!"),
+            onLeftSwipe: (Card card) {
+              print("Swiped left!");
+
+              print(movieList.length);
+            },
+            onRightSwipe: (Card card) {
+              print("Swiped right!");
+            },
             cardWidth: 200,
             swipeThreshold: MediaQuery.of(context).size.width / 3,
             minimumVelocity: 1000,
