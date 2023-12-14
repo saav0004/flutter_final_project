@@ -98,25 +98,29 @@ class _DismissibleContainerState extends State<DismissibleContainer> {
                     } else if (direction == DismissDirection.startToEnd) {
                       // GOOD VOTE
                       String movieID = movieList[index].id.toString();
+                      print(movieID);
                       String vote = 'true';
                       var finalURL = voteURL + "&movie_id=$movieID&vote=$vote";
 
                       var result = await HttpHelper.voteSession(finalURL);
 
                       int matchedMovie = int.parse(result.movieId);
+
                       // find the matched movie in the array
                       var matchedMovieObject = movieList
                           .firstWhere((element) => element.id == matchedMovie);
 
-                      // push a screen to MatchScreen
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => MatchScreen(
-                            matchedMovie: matchedMovieObject,
+                      // send me to match screen if match is true
+                      if (result.match == true) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MatchScreen(
+                              matchedMovie: matchedMovieObject,
+                            ),
                           ),
-                        ),
-                      );
+                        );
+                      }
 
                       direction = DismissDirection.startToEnd;
                     }
