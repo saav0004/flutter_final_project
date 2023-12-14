@@ -5,25 +5,32 @@ class MyDataModel extends ChangeNotifier {
   String _deviceId = '';
   String _sessionId = '';
   String _code = '';
+  bool _isMatch = false;
 
   // getters
   String get deviceId => _deviceId;
   String get sessionId => _sessionId;
   String get code => _code;
+  bool get isMatch => _isMatch;
 
   // setters
-  set setDeviceId(String deviceId) {
+  void setDeviceId(String deviceId) {
     _deviceId = deviceId;
     notifyListeners();
   }
 
-  set setSessionId(String sessionId) {
+  void setSessionId(String sessionId) {
     _sessionId = sessionId;
     notifyListeners();
   }
 
-  set setCode(String code) {
+  void setCode(String code) {
     _code = code;
+    notifyListeners();
+  }
+
+  void setIsMatch(bool isMatch) {
+    _isMatch = isMatch;
     notifyListeners();
   }
 }

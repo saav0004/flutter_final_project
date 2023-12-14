@@ -24,14 +24,17 @@ class _ShareCodeScreenState extends State<ShareCodeScreen> {
     String url = Provider.of<MyDataModel>(context, listen: false).deviceId;
     Session session = await HttpHelper.fetchSession(
         "https://movie-night-api.onrender.com/start-session?device_id=$url");
-    print(session.code);
 
-    setState(() {
-      Provider.of<MyDataModel>(context, listen: false).setCode = session.code;
+    context.read<MyDataModel>().setSessionId(session.sessionId);
 
-      Provider.of<MyDataModel>(context, listen: false).setSessionId =
-          session.sessionId;
-    });
+    context.read<MyDataModel>().setCode(session.code);
+
+    // setState(() {
+    //   Provider.of<MyDataModel>(context, listen: false).setCode = session.code;
+
+    //   Provider.of<MyDataModel>(context, listen: false).setSessionId =
+    //       session.sessionId;
+    // });
   }
 
   @override

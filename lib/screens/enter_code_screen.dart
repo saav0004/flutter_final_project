@@ -30,19 +30,18 @@ class _EnterCodeScreenState extends State<EnterCodeScreen> {
   // Join session function
   void _fetchJoinSession(String code) async {
     String deviceId = Provider.of<MyDataModel>(context, listen: false).deviceId;
-    print("Device ID: $deviceId");
 
     String url =
         "https://movie-night-api.onrender.com/join-session?device_id=$deviceId&code=$code";
 
     JoinSession joinSession = await HttpHelper.joinSession(url);
 
-    print(joinSession.message);
+    context.read<MyDataModel>().setSessionId(joinSession.sessionId);
 
-    setState(() {
-      Provider.of<MyDataModel>(context, listen: false).setSessionId =
-          joinSession.sessionId;
-    });
+    // setState(() {
+    //   Provider.of<MyDataModel>(context, listen: false).setSessionId =
+    //       joinSession.sessionId;
+    // });
 
     Navigator.pushNamed(context, "/movie_selection_screen");
   }
@@ -95,7 +94,7 @@ class _EnterCodeScreenState extends State<EnterCodeScreen> {
               onPressed: () {
                 if (_formStateKey.currentState!.validate()) {
                   _formStateKey.currentState!.save();
-                  print("Code: ${_data.code}");
+
                   _fetchJoinSession(_data.code);
                 } else {
                   print("Form is invalid");

@@ -49,7 +49,7 @@ class HttpHelper {
     http.Response resp = await http.get(uri);
     if (resp.statusCode == 200) {
       Map<String, dynamic> data = jsonDecode(resp.body);
-      print(data);
+
       return VoteSession.fromJson(data);
     } else {
       throw Exception('Did not get a valid response');
@@ -127,7 +127,7 @@ class JoinSession {
 
 class VoteSession {
   String message;
-  int movieId;
+  String movieId;
   bool match;
 
   // from json
