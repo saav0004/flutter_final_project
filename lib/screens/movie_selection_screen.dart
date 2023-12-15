@@ -82,7 +82,7 @@ class _DismissibleContainerState extends State<DismissibleContainer> {
               // Handle left swipe (dislike)
               String movieID = movieList[currentMovieIndex].id.toString();
               String vote = 'false';
-              var finalURL = voteURL + "&movie_id=$movieID&vote=$vote";
+              var finalURL = "$voteURL&movie_id=$movieID&vote=$vote";
               var result = await HttpHelper.voteSession(finalURL);
 
               int matchedMovie = int.parse(result.movieId);
@@ -104,7 +104,7 @@ class _DismissibleContainerState extends State<DismissibleContainer> {
               // Handle right swipe (like)
               String movieID = movieList[currentMovieIndex].id.toString();
               String vote = 'true';
-              var finalURL = voteURL + "&movie_id=$movieID&vote=$vote";
+              var finalURL = "$voteURL&movie_id=$movieID&vote=$vote";
               var result = await HttpHelper.voteSession(finalURL);
 
               int matchedMovie = int.parse(result.movieId);
