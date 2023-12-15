@@ -111,7 +111,7 @@ class _DismissibleContainerState extends State<DismissibleContainer> {
               // find the matched movie in the array
               var matchedMovieObject =
                   movieList.firstWhere((element) => element.id == matchedMovie);
-              // send me to the match screen if match is true
+              // send to the match screen if match is true
               if (result.match == true) {
                 Navigator.push(
                   context,

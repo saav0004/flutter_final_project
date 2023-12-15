@@ -28,13 +28,6 @@ class _ShareCodeScreenState extends State<ShareCodeScreen> {
     context.read<MyDataModel>().setSessionId(session.sessionId);
 
     context.read<MyDataModel>().setCode(session.code);
-
-    // setState(() {
-    //   Provider.of<MyDataModel>(context, listen: false).setCode = session.code;
-
-    //   Provider.of<MyDataModel>(context, listen: false).setSessionId =
-    //       session.sessionId;
-    // });
   }
 
   @override
