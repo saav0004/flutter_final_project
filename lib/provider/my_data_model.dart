@@ -1,3 +1,4 @@
+import 'package:final_project/utils/http_helper.dart';
 import 'package:flutter/material.dart';
 
 class MyDataModel extends ChangeNotifier {
@@ -12,17 +13,17 @@ class MyDataModel extends ChangeNotifier {
   String get code => _code;
 
   // setters
-  set setDeviceId(String deviceId) {
+  void setDeviceId(String deviceId) {
     _deviceId = deviceId;
     notifyListeners();
   }
 
-  set setSessionId(String sessionId) {
+  void setSessionId(String sessionId) {
     _sessionId = sessionId;
     notifyListeners();
   }
 
-  set setCode(String code) {
+  void setCode(String code) {
     _code = code;
     notifyListeners();
   }

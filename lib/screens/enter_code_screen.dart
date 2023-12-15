@@ -22,7 +22,6 @@ class _EnterCodeScreenState extends State<EnterCodeScreen> {
 
   @override
   void dispose() {
-    // Clean up the controller when the widget is removed from the widget tree.
     codeController.dispose();
     super.dispose();
   }
@@ -30,19 +29,13 @@ class _EnterCodeScreenState extends State<EnterCodeScreen> {
   // Join session function
   void _fetchJoinSession(String code) async {
     String deviceId = Provider.of<MyDataModel>(context, listen: false).deviceId;
-    print("Device ID: $deviceId");
 
     String url =
         "https://movie-night-api.onrender.com/join-session?device_id=$deviceId&code=$code";
 
     JoinSession joinSession = await HttpHelper.joinSession(url);
 
-    print(joinSession.message);
-
-    setState(() {
-      Provider.of<MyDataModel>(context, listen: false).setSessionId =
-          joinSession.sessionId;
-    });
+    context.read<MyDataModel>().setSessionId(joinSession.sessionId);
 
     Navigator.pushNamed(context, "/movie_selection_screen");
   }
@@ -66,7 +59,7 @@ class _EnterCodeScreenState extends State<EnterCodeScreen> {
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Container(
-                  margin: EdgeInsets.fromLTRB(40, 0, 40, 0),
+                  margin: const EdgeInsets.fromLTRB(40, 0, 40, 0),
                   child: TextFormField(
                     controller: codeController,
                     keyboardType: TextInputType.number,
@@ -95,7 +88,7 @@ class _EnterCodeScreenState extends State<EnterCodeScreen> {
               onPressed: () {
                 if (_formStateKey.currentState!.validate()) {
                   _formStateKey.currentState!.save();
-                  print("Code: ${_data.code}");
+
                   _fetchJoinSession(_data.code);
                 } else {
                   print("Form is invalid");

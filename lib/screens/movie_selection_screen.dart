@@ -1,21 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:final_project/provider/my_data_model.dart';
+import 'package:final_project/screens/match_screen.dart';
 import 'package:final_project/utils/http_helper.dart';
+import 'package:provider/provider.dart';
 
-// swipe card package
-import 'package:swiping_card_deck/swiping_card_deck.dart';
+//https://movie-night-api.onrender.com/vote-movie?session_id=$sessionID&movie_id=$movieID&vote=$vote
 
 class MovieSelectionScreen extends StatefulWidget {
-  const MovieSelectionScreen({super.key});
+  const MovieSelectionScreen({Key? key}) : super(key: key);
 
   @override
   State<MovieSelectionScreen> createState() => _MovieSelectionScreenState();
 }
 
 class _MovieSelectionScreenState extends State<MovieSelectionScreen> {
-  late Future<List<Movie>> movies;
-  late List<Movie> movieList;
-  int currentPage = 1;
+  @override
+  Widget build(BuildContext context) {
+    return const DismissibleContainer();
+  }
+}
 
+class DismissibleContainer extends StatefulWidget {
+  const DismissibleContainer({super.key});
+
+  @override
+  State<DismissibleContainer> createState() => _DismissibleContainerState();
+}
+
+class _DismissibleContainerState extends State<DismissibleContainer> {
+  int currentPage = 1;
   Future<List<Movie>> fetchMovies(int page) async {
     String url =
         'https://api.themoviedb.org/3/movie/popular?api_key=516113cfd57ae5d6cb785a6c5bb76fc0&page=$page';
@@ -23,18 +36,19 @@ class _MovieSelectionScreenState extends State<MovieSelectionScreen> {
     return result;
   }
 
-  /*
+  late Future<List<Movie>> movies;
 
-              // https://movie-night-api.onrender.com/vote-movie?session_id=$sessionID&movie_id=$movieID&vote=$vote
-  */
+// TODO fix rebuilding issue
+  // final finalMovies =
 
   @override
   Widget build(BuildContext context) {
+    var provider = context.read<MyDataModel>();
+
     movies = fetchMovies(currentPage);
-
-    bool isMatch = false;
-
-    Movie? movieMatch;
+    String sessionID = provider.sessionId;
+    String voteURL =
+        "https://movie-night-api.onrender.com/vote-movie?session_id=$sessionID";
 
     return FutureBuilder<List<Movie>>(
       future: movies,
@@ -58,180 +72,78 @@ class _MovieSelectionScreenState extends State<MovieSelectionScreen> {
             ),
           );
         } else {
-          movieList = snapshot.data!;
-          SwipingCardDeck deck = SwipingCardDeck(
-            cardDeck: getCardDeck(),
-            onDeckEmpty: () async {
-              setState(() {
-                currentPage++;
-              });
-              const Text("No more movies available");
+          var movieList = snapshot.data!;
 
-              List<Movie> nextPageMovies = await fetchMovies(currentPage + 1);
-              if (nextPageMovies.isNotEmpty) {
-                setState(
-                  () {
-                    movieList = nextPageMovies;
-                  },
-                );
-              }
-            },
-            onLeftSwipe: (Card card) {
-              print("Swiped left!");
-
-              print(movieList.length);
-            },
-            onRightSwipe: (Card card) {
-              print("Swiped right!");
-            },
-            cardWidth: 200,
-            swipeThreshold: MediaQuery.of(context).size.width / 3,
-            minimumVelocity: 1000,
-            rotationFactor: 0.8 / 3.14,
-            swipeAnimationDuration: const Duration(milliseconds: 300),
-            disableDragging: false,
-          );
           return Scaffold(
             appBar: AppBar(
               title: const Text('Movie selection screen'),
             ),
-            body: Padding(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  deck,
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.clear),
-                        iconSize: 30,
-                        color: Colors.red,
-                        onPressed: deck.animationActive
-                            ? null
-                            : () => deck.swipeLeft(),
-                      ),
-                      const SizedBox(width: 40),
-                      IconButton(
-                        icon: const Icon(Icons.check),
-                        iconSize: 30,
-                        color: Colors.green,
-                        onPressed: deck.animationActive
-                            ? null
-                            : () => deck.swipeRight(),
-                      ),
-                    ],
+            body: ListView.builder(
+              itemCount: movieList.length,
+              itemBuilder: (context, index) {
+                return Dismissible(
+                  key: ValueKey<int>(movieList[index].id),
+                  onDismissed: (DismissDirection direction) async {
+                    if (direction == DismissDirection.endToStart) {
+                      //&movie_id=$movieID&vote=$vote
+
+                      String movieID = movieList[index].id.toString();
+                      String vote = 'false';
+
+                      var finalURL = voteURL + "&movie_id=$movieID&vote=$vote";
+
+                      var result = await HttpHelper.voteSession(finalURL);
+
+                      direction = DismissDirection.endToStart;
+                    } else if (direction == DismissDirection.startToEnd) {
+                      // GOOD VOTE
+                      String movieID = movieList[index].id.toString();
+                      print(movieID);
+                      String vote = 'true';
+                      var finalURL = voteURL + "&movie_id=$movieID&vote=$vote";
+
+                      var result = await HttpHelper.voteSession(finalURL);
+
+                      int matchedMovie = int.parse(result.movieId);
+
+                      // find the matched movie in the array
+                      var matchedMovieObject = movieList
+                          .firstWhere((element) => element.id == matchedMovie);
+
+                      // send me to match screen if match is true
+                      if (result.match == true) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MatchScreen(
+                              matchedMovie: matchedMovieObject,
+                            ),
+                          ),
+                        );
+                      }
+
+                      direction = DismissDirection.startToEnd;
+                    }
+                  },
+                  background: Container(
+                    color: Colors.green,
+                    child: const Icon(Icons.check),
                   ),
-                ],
-              ),
+                  secondaryBackground: Container(
+                    color: Colors.red,
+                    child: const Icon(Icons.delete),
+                  ),
+                  child: ListTile(
+                    title: Text(
+                      movieList[index].title,
+                    ),
+                  ),
+                );
+              },
             ),
           );
         }
       },
     );
-  }
-
-  List<Card> getCardDeck() {
-    return movieList.map((movie) {
-      return Card(
-        color: Colors.white,
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.6),
-                spreadRadius: 3, // spread radius
-                blurRadius: 10, // blur radius
-                offset: const Offset(0, 3), // changes position of shadow
-              ),
-            ],
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(10),
-            child: Container(
-              height: 550,
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: NetworkImage(
-                      'https://image.tmdb.org/t/p/original/${movie.posterPath}'),
-                  fit: BoxFit.cover,
-                ),
-              ),
-              child: Align(
-                alignment: Alignment.bottomLeft,
-                child: Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      colors: [
-                        Color.fromRGBO(4, 4, 4, 0),
-                        Color.fromRGBO(4, 4, 4, 0.8),
-                        Color.fromRGBO(4, 4, 4, 0.9),
-                        Color.fromRGBO(4, 4, 4, 1),
-                      ],
-                      begin: Alignment.topCenter,
-                      end: Alignment.bottomCenter,
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            SizedBox(
-                              width: 200,
-                              child: Text(
-                                maxLines: 2,
-                                movie.title,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                            Text(
-                              movie.releaseDate.toString(),
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                              ),
-                            ),
-                            Row(
-                              children: [
-                                const Icon(
-                                  Icons.star_rate,
-                                  color: Colors.yellow,
-                                ),
-                                const SizedBox(
-                                  width: 20,
-                                ),
-                                Text(
-                                  movie.voteAverage.toString(),
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 16,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ),
-      );
-    }).toList();
   }
 }
