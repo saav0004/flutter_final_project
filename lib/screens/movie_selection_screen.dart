@@ -5,7 +5,7 @@ import 'package:final_project/utils/http_helper.dart';
 import 'package:provider/provider.dart';
 
 class MovieSelectionScreen extends StatefulWidget {
-  const MovieSelectionScreen({Key? key}) : super(key: key);
+  const MovieSelectionScreen({super.key});
 
   @override
   State<MovieSelectionScreen> createState() => _MovieSelectionScreenState();
@@ -19,7 +19,7 @@ class _MovieSelectionScreenState extends State<MovieSelectionScreen> {
 }
 
 class DismissibleContainer extends StatefulWidget {
-  const DismissibleContainer({Key? key}) : super(key: key);
+  const DismissibleContainer({super.key});
 
   @override
   State<DismissibleContainer> createState() => _DismissibleContainerState();

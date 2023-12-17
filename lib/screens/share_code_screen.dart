@@ -19,7 +19,7 @@ class _ShareCodeScreenState extends State<ShareCodeScreen> {
     _fetchSession();
   }
 
-// Create a separate method to fetch sessionx
+// Create a separate method to fetch session
   void _fetchSession() async {
     String url = Provider.of<MyDataModel>(context, listen: false).deviceId;
     Session session = await HttpHelper.fetchSession(
