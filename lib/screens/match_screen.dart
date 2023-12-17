@@ -1,7 +1,5 @@
-import 'package:final_project/provider/my_data_model.dart';
 import 'package:final_project/utils/http_helper.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class MatchScreen extends StatefulWidget {
   const MatchScreen({super.key, required this.matchedMovie});

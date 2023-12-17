@@ -18,7 +18,7 @@ class _EnterCodeScreenState extends State<EnterCodeScreen> {
   final GlobalKey<FormState> _formStateKey = GlobalKey<FormState>();
   final TextEditingController codeController = TextEditingController();
 
-  MyData _data = MyData();
+  final MyData _data = MyData();
 
   @override
   void dispose() {
@@ -91,7 +91,11 @@ class _EnterCodeScreenState extends State<EnterCodeScreen> {
 
                   _fetchJoinSession(_data.code);
                 } else {
-                  print("Form is invalid");
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Please enter a valid 4-digit code"),
+                    ),
+                  );
                 }
               },
               child: const Text('Begin'),

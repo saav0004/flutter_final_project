@@ -14,7 +14,7 @@ class MovieSelectionScreen extends StatefulWidget {
 class _MovieSelectionScreenState extends State<MovieSelectionScreen> {
   @override
   Widget build(BuildContext context) {
-    return DismissibleContainer();
+    return const DismissibleContainer();
   }
 }
 
@@ -29,7 +29,7 @@ class _DismissibleContainerState extends State<DismissibleContainer> {
   int currentPage = 1;
   List<Movie> movieList = [];
   int currentMovieIndex = 0;
-  PageController _pageController = PageController();
+  final PageController _pageController = PageController();
 
   @override
   void initState() {
