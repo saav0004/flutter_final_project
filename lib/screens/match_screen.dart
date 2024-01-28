@@ -1,3 +1,4 @@
+import 'package:final_project/screens/welcome_screen.dart';
 import 'package:final_project/utils/http_helper.dart';
 import 'package:flutter/material.dart';
 
@@ -31,7 +32,8 @@ class _MatchScreenState extends State<MatchScreen> {
             const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
-                Navigator.pop(context);
+                Navigator.of(context).push(MaterialPageRoute(
+                    builder: (context) => const WelcomeScreen()));
               },
               child: const Text('Back to Movie Selection'),
             ),

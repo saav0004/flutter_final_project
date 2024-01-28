@@ -17,7 +17,18 @@ class WelcomeScreen extends StatelessWidget {
               onPressed: () {
                 Navigator.pushNamed(context, "/share_code_screen");
               },
-              child: const Text('Start session'),
+              child: Text(
+                'Start session',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.secondary,
+                  fontSize: Theme.of(context).textTheme.titleLarge!.fontSize,
+                  fontWeight: Theme.of(context)
+                      .textTheme
+                      .titleLarge!
+                      .copyWith(fontWeight: FontWeight.w800)
+                      .fontWeight,
+                ),
+              ),
             ),
             const Text("Welcome to the app"),
             ElevatedButton(

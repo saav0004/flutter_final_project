@@ -17,6 +17,9 @@ import 'package:final_project/provider/my_data_model.dart';
 import 'package:flutter/services.dart';
 import 'package:platform_device_id/platform_device_id.dart';
 
+// google fonts
+import 'package:google_fonts/google_fonts.dart';
+
 // my key
 // 'https://api.themoviedb.org/3/movie/11?api_key=516113cfd57ae5d6cb785a6c5bb76fc0'
 
@@ -59,6 +62,15 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      theme: ThemeData(
+          fontFamily: GoogleFonts.lato().fontFamily,
+          brightness: Brightness.dark,
+          colorScheme: ColorScheme.fromSeed(
+            brightness: Brightness.dark,
+            seedColor: Colors.red,
+            primary: Colors.red[400],
+            secondary: Colors.blue[400],
+          )),
       title: 'Final Project',
       initialRoute: "/welcome_screen",
       routes: {
